@@ -13,7 +13,11 @@ class DirbManager:
         self.num_threads = num_threads
 
     def enumerate(self):
-        request_queue = Queue(maxsize=0)
+        # The max number of requests in the queue at any given time
+        max_requests_in_queue = self.num_threads*10
+
+        # Queues are used to pass information between threads
+        request_queue = Queue(maxsize=max_requests_in_queue)
         response_queue = Queue(maxsize=0)
         output_queue = Queue(maxsize=0)
 
@@ -33,7 +37,7 @@ class DirbManager:
         output_worker.start()
 
         # Kick off enumeration
-        self.mode.begin_processing(request_queue, response_queue)
+        self.mode.enumerate(request_queue, response_queue, output_queue)
 
         # Clean up threads once complete
         for worker in request_workers:
