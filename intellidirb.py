@@ -1,3 +1,4 @@
+import sys
 from argparse import ArgumentParser
 from art import tprint
 
@@ -7,24 +8,31 @@ from dirb.modes.dictionary import Dictionary
 from dirb.output.output_handler import OutputHandler
 from dirb.wordlist_file import WordlistFile
 
+class CustomParser(ArgumentParser):
+    def error(self, message):
+        sys.stdout.write(f'Error: {message}\n\n')
+        self.print_help()
+        sys.exit(2)
 
 def print_header():
     tprint('IntelliDirb', 'tarty1')
+    print()
 
 def setup_argument_parser():
-    arg_parser: ArgumentParser = ArgumentParser()
+    arg_parser: ArgumentParser = CustomParser()
 
+    arg_parser.add_argument('target', help='Target IP and port to enumeration.')
+    arg_parser.add_argument('-w', dest='wordlist', required=True, help='Wordlist file.')
     arg_parser.add_argument('-m', dest='mode',
                         choices=['dict', 'content', 'service', 'script', 'all'], default='dict',
                         help='Choose the fuzzing mode.')
-    arg_parser.add_argument('-o', dest='out_file', required=False, help='Output file.')
-    arg_parser.add_argument('-w', dest='wordlist', required=True, help='Wordlist file.')
-    arg_parser.add_argument('-t', dest='threads', type=int, default=10, required=False, help='The number of threads to use (default=10).')
-    arg_parser.add_argument(dest='target', required=True, help='Target IP and port to enumeration.')
+    arg_parser.add_argument('-x', dest='extensions', help='Extensions to test for each word.')
+    arg_parser.add_argument('-o', dest='out_file', help='Output file.')
+    arg_parser.add_argument('-t', dest='threads', type=int, default=10, help='The number of threads to use (default=10).')
 
     return arg_parser
 
-if __name__ == 'main':
+if __name__ == '__main__':
     print_header()
 
     parser = setup_argument_parser()
@@ -40,7 +48,7 @@ if __name__ == 'main':
     wordlist = WordlistFile(args.wordlist)
 
     # Setup mode
-    mode = Dictionary(wordlist)
+    mode = Dictionary(wordlist, args.extensions)
 
     # Setup target
     target = Target(args.target)

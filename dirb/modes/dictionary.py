@@ -1,5 +1,5 @@
 
-from mode import Mode
+from dirb.modes.mode import Mode
 
 class Dictionary(Mode):
 
