@@ -21,7 +21,7 @@ class DirbManager:
         status = DirbStatus()
 
         # The max number of requests in the queue at any given time
-        max_requests_in_queue = self.num_threads*10
+        max_requests_in_queue = self.num_threads*1000
 
         # Queues are used to pass information between threads
         request_queue = Queue(maxsize=max_requests_in_queue)
