@@ -5,9 +5,7 @@ class ResponseValidator:
         self.size_counter = {}
 
         # anything that indicates a webpage is there
-        self.valid_response_codes = [200, 201, 202, 301, 302, 400, 401, 403, 500]
-        # anything that indicates a webpage is not there
-        self.invalid_response_codes = [404]
+        self.valid_response_codes = [200, 201, 202, 301, 302, 400, 401, 403, 405, 500]
 
     def validate_response(self, response: Response):
         resp_size = len(response.content)
@@ -25,8 +23,5 @@ class ResponseValidator:
 
         if response.status_code in self.valid_response_codes:
             return True
-
-        if response.status_code in self.invalid_response_codes:
-            return False
 
         return False
