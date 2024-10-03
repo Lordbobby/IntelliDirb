@@ -11,8 +11,7 @@ class DirbStatus:
         self.start_time = time.time_ns()
 
 class DirbManager:
-    def __init__(self, target, mode, output_handler, num_threads=10):
-        self.target = target
+    def __init__(self, mode, output_handler, num_threads=10):
         self.mode = mode
         self.output_handler = output_handler
         self.num_threads = num_threads
@@ -32,7 +31,7 @@ class DirbManager:
         request_workers = []
 
         for i in range(self.num_threads):
-            request_worker = Thread(target=send_queued_requests, args=(self.target, request_queue, response_queue, status))
+            request_worker = Thread(target=send_queued_requests, args=(request_queue, response_queue, status))
             request_worker.daemon = True
             request_worker.start()
 

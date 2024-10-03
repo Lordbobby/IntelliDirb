@@ -47,11 +47,11 @@ if __name__ == '__main__':
     # Setup wordlist
     wordlist = WordlistFile(args.wordlist)
 
-    # Setup mode
-    mode = Dictionary(wordlist, args.extensions)
-
     # Setup target
     target = Target(args.target)
 
-    dirb = DirbManager(target, mode, output_handler, args.threads)
+    # Setup mode
+    mode = Dictionary(wordlist, target, args.extensions)
+
+    dirb = DirbManager(mode, output_handler, args.threads)
     dirb.enumerate()
