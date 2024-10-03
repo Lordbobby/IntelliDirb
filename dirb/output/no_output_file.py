@@ -1,3 +1,5 @@
 
 class NoOutputFile:
-    pass
+
+    def write_message(self, message):
+        pass
