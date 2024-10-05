@@ -3,6 +3,7 @@ from queue import Queue
 from threading import Thread
 
 from dirb.enum.http_client_worker import send_queued_requests
+from dirb.output import logger
 from dirb.output.output_worker import handle_output
 
 class DirbStatus:
@@ -17,6 +18,7 @@ class DirbManager:
         self.num_threads = num_threads
 
     def enumerate(self):
+        logger.info('Beginning enumeration...')
         status = DirbStatus()
 
         # The max number of requests in the queue at any given time

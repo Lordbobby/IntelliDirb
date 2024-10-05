@@ -2,6 +2,7 @@ import sys
 from argparse import ArgumentParser
 from art import tprint
 
+from dirb.output import logger
 from dirb.target import Target
 from dirb.dirb_manager import DirbManager
 from dirb.modes.dictionary import Dictionary
@@ -29,6 +30,8 @@ def setup_argument_parser():
     arg_parser.add_argument('-x', dest='extensions', help='Extensions to test for each word.')
     arg_parser.add_argument('-o', dest='out_file', help='Output file.')
     arg_parser.add_argument('-t', dest='threads', type=int, default=10, help='The number of threads to use (default=10).')
+    arg_parser.add_argument('-l', dest='log_level', default='INFO', choices=['DEBUG', 'INFO', 'ERROR', 'CRITICAL'],
+                            help='Log level for printed messages (default=INFO).')
 
     return arg_parser
 
@@ -40,6 +43,7 @@ if __name__ == '__main__':
 
     # Setup output handling
     output_handler = OutputHandler()
+    logger.set_current_log_level(args.log_level)
 
     if args.out_file:
         output_handler.set_output_file(args.out_file)
