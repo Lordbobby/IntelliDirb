@@ -39,11 +39,18 @@ class Mode:
         logger.debug('Mode is beginning enumeration...')
 
         while self.is_wordlist_not_exhausted() or not request_queue.empty() or not response_queue.empty():
-            self.handle_responses(response_queue, output_queue)
+            self.enumerate_wordlist(request_queue, response_queue, output_queue)
 
-            self.update_request_queue(request_queue)
+            # Ensure requests and responses have finished
+            logger.debug(f'ensuring request queue joins {self.is_wordlist_not_exhausted()} {request_queue.empty()} {response_queue.empty()}')
+            request_queue.join()
 
         logger.debug('Mode is finished enumerating.')
+
+    def enumerate_wordlist(self, request_queue, response_queue, output_queue):
+        while self.is_wordlist_not_exhausted() or not request_queue.empty() or not response_queue.empty():
+            self.handle_responses(response_queue, output_queue)
+            self.update_request_queue(request_queue)
 
     def recurse_directory(self, path: str):
         if not path.startswith('/'):
@@ -62,14 +69,15 @@ class Mode:
         self.current_directory = self.directory_queue.get()
 
     def update_request_queue(self, request_queue):
+        if self.wordlist.index >= self.wordlist.lines:
+            return
+
         words = self.wordlist.get_words(WORDS_TO_PULL)
 
         logger.debug(f'Adding requests to queue based on {len(words)} words and this extension list: {self.extensions}')
 
         for extension in self.extensions:
             for word in words:
-                url = f'{self.target}{self.current_directory}{word}{extension}'
-                logger.debug(f'Adding request: {url}')
                 request_queue.put(f'{self.target}{self.current_directory}{word}{extension}')
 
         if len(words) < WORDS_TO_PULL:
@@ -80,13 +88,13 @@ class Mode:
         processed = 0
         
         while not response_queue.empty() and processed < WORDS_TO_PULL:
-            logger.debug('Mode processing response.')
-
             processed += 1
             response = response_queue.get()
-            
+
+            logger.debug(f'Mode processing response: {response.status_code} {response.url}')
+
             if not self.validator.validate_response(response):
-                pass
+                continue
             
             self.process_valid_response(response, output_queue)
 

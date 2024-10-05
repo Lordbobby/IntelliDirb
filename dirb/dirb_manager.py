@@ -47,6 +47,10 @@ class DirbManager:
         # Kick off enumeration
         self.mode.enumerate(request_queue, response_queue, output_queue)
 
+        # Ensure queues finish
+        request_queue.join()
+        output_queue.join()
+
         status.running = False
 
         # Clean up threads once complete
