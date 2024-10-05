@@ -12,7 +12,7 @@ class Message:
             self.type,
         ]
 
-        [fields.append(arg) for arg in args]
+        [fields.append(str(arg)) for arg in args]
         [fields.append('') for _ in range(10 - len(fields))] # ensure 10 fields
 
         return ','.join(fields)
@@ -29,7 +29,7 @@ class ResponseMessage(Message):
         self.response = response
 
     def to_csv_string(self):
-        return super().to_csv_string(self.response.status_code, self.response.url)
+        return super().to_csv_string(self.response.status_code, len(self.response.content), self.response.url)
 
     def to_console_string(self):
         return super().to_console_string(self.response.status_code, len(self.response.content), self.response.url)

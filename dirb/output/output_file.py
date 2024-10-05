@@ -5,6 +5,10 @@ class OutputFile:
         # TODO Validate file path
         self.filepath = file_path
 
-    def write_message(self, message):
+        # Clear out file
         with open(self.filepath, 'w+') as output_file:
-            output_file.write(message)
+            output_file.write('')
+
+    def write_message(self, message):
+        with open(self.filepath, 'a') as output_file:
+            output_file.write(message + '\n')

@@ -11,5 +11,6 @@ def handle_output(output_handler, output_queue, status):
         message = output_queue.get()
 
         output_handler.send_message(message)
+        output_queue.task_done()
 
     logger.debug('Output worker finished.')
