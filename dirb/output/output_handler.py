@@ -11,7 +11,10 @@ class OutputHandler:
         self.output_file = OutputFile(file_path)
 
     def send_message(self, message: Message):
-        print(message.to_console_string())
+        console_string = message.to_console_string()
+
+        if len(console_string):
+            print(console_string)
 
         csv_string = message.to_csv_string()
 

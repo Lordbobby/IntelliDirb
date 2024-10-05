@@ -2,25 +2,35 @@ from time import time_ns
 
 from requests import Response
 
+from dirb.output.color import Color
+
+
 class Message:
     def __init__(self, message_type):
+        self.creation_time = str(time_ns())
         self.type = message_type
 
     def to_csv_string(self, *args):
         fields = [
-            str(time_ns()),
+            self.creation_time,
             self.type,
         ]
 
         [fields.append(str(arg)) for arg in args]
-        [fields.append('') for _ in range(10 - len(fields))] # ensure 10 fields
+        [fields.append('') for _ in range(5 - len(fields))] # ensure 5 fields
 
         return ','.join(fields)
 
-    def to_console_string(self, *args):
-        args = [str(arg) for arg in args]
+    def to_console_string(self):
+        return ''
 
-        return '\t'.join(args)
+class StartMessage(Message):
+    def __init__(self):
+        super().__init__('Start')
+
+class FinishMessage(Message):
+    def __init__(self):
+        super().__init__('Finish')
 
 class ResponseMessage(Message):
     def __init__(self, response: Response):
@@ -32,4 +42,31 @@ class ResponseMessage(Message):
         return super().to_csv_string(self.response.status_code, len(self.response.content), self.response.url)
 
     def to_console_string(self):
-        return super().to_console_string(self.response.status_code, len(self.response.content), self.response.url)
+        status_code = self.response.status_code
+        size = f'{len(self.response.content)}c'
+        lines = f'{self.response.content.count(0x0A)}l'
+        color = Color.BLUE
+        reset = Color.RESET
+
+        if 200 <= status_code < 300:
+            color = Color.GREEN
+
+        if 300 <= status_code < 400:
+            color = Color.YELLOW
+
+        if 400 <= status_code:
+            color = Color.RED
+
+        return f'{color}{str(status_code):6}{reset} {lines:6} {size:8} {self.response.url}'
+
+class LogMessage(Message):
+    def __init__(self, message):
+        super().__init__('LogMessage')
+
+        self.message = message
+
+    def to_csv_string(self):
+        return ''
+
+    def to_console_string(self, *kwargs):
+        return self.message

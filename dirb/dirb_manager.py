@@ -29,6 +29,9 @@ class DirbManager:
         response_queue = Queue(maxsize=0)
         output_queue = Queue(maxsize=0)
 
+        # Setup output queue usage
+        logger.set_output_queue(output_queue)
+
         # Spin up request worker threads
         request_workers = []
 

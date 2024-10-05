@@ -2,7 +2,7 @@ from queue import Queue
 
 from dirb.enum.response_validator import ResponseValidator
 from dirb.output import logger
-from dirb.output.messages import ResponseMessage
+from dirb.output.messages import ResponseMessage, StartMessage, FinishMessage
 from dirb.target import Target
 from dirb.wordlist_file import WordlistFile
 
@@ -37,6 +37,7 @@ class Mode:
 
     def enumerate(self, request_queue, response_queue, output_queue):
         logger.debug('Mode is beginning enumeration...')
+        output_queue.put(StartMessage())
 
         while self.is_wordlist_not_exhausted() or not request_queue.empty() or not response_queue.empty():
             self.enumerate_wordlist(request_queue, response_queue, output_queue)
@@ -44,6 +45,7 @@ class Mode:
             # Ensure requests have finished
             request_queue.join()
 
+        output_queue.put(FinishMessage())
         logger.debug('Mode is finished enumerating.')
 
     def enumerate_wordlist(self, request_queue, response_queue, output_queue):
