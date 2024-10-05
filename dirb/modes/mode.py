@@ -41,8 +41,7 @@ class Mode:
         while self.is_wordlist_not_exhausted() or not request_queue.empty() or not response_queue.empty():
             self.enumerate_wordlist(request_queue, response_queue, output_queue)
 
-            # Ensure requests and responses have finished
-            logger.debug(f'ensuring request queue joins {self.is_wordlist_not_exhausted()} {request_queue.empty()} {response_queue.empty()}')
+            # Ensure requests have finished
             request_queue.join()
 
         logger.debug('Mode is finished enumerating.')
@@ -91,7 +90,7 @@ class Mode:
             processed += 1
             response = response_queue.get()
 
-            logger.debug(f'Mode processing response: {response.status_code} {response.url}')
+            logger.debug(f'Mode processing response: [{response.status_code}] {response.url}')
 
             if not self.validator.validate_response(response):
                 continue
