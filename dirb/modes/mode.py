@@ -32,8 +32,13 @@ class Mode:
         self.current_directory = '/'
         self.directory_queue = Queue(maxsize=0)
 
+    def is_wordlist_not_exhausted(self):
+        return self.wordlist.index < self.wordlist.lines or not self.directory_queue.empty()
+
     def enumerate(self, request_queue, response_queue, output_queue):
-        while self.wordlist.index < self.wordlist.lines and not self.directory_queue.empty():
+        logger.debug('Mode is beginning enumeration...')
+
+        while self.is_wordlist_not_exhausted() or not request_queue.empty() or not response_queue.empty():
             self.handle_responses(response_queue, output_queue)
 
             self.update_request_queue(request_queue)
