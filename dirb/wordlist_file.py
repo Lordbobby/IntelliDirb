@@ -29,9 +29,13 @@ class WordlistFile:
         self.byte_index = 0
 
     def get_words(self, num):
+        if self.index >= self.lines:
+            return []
+
         logger.debug(f'Getting {num} words from the dictionary.')
 
         with open(self.file_path, 'r') as file:
+            file.seek(self.byte_index)
             words = file.readlines(num)
             words = [word.rstrip() for word in words]
 
