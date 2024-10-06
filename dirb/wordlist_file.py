@@ -36,8 +36,16 @@ class WordlistFile:
 
         with open(self.file_path, 'r') as file:
             file.seek(self.byte_index)
-            words = file.readlines(num)
-            words = [word.rstrip() for word in words]
+
+            words = []
+            line = file.readline()
+            while line:
+                words.append(line.rstrip())
+
+                if len(words) >= num:
+                    break
+
+                line = file.readline()
 
             self.index += num
             self.byte_index = file.tell()
