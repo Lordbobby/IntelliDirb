@@ -29,8 +29,12 @@ class StartMessage(Message):
         super().__init__('Start')
 
 class FinishMessage(Message):
-    def __init__(self):
+    def __init__(self, stats):
         super().__init__('Finish')
+        self.stats = stats
+
+    def to_csv_string(self):
+        return super().to_csv_string(self.stats.requests, self.stats.valid_responses)
 
 class ResponseMessage(Message):
     def __init__(self, response: Response):

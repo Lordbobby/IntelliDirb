@@ -2,6 +2,7 @@ from queue import Queue
 
 from dirb.enum.response_validator import ResponseValidator
 from dirb.output import logger
+from dirb.output.color import Color
 from dirb.output.messages import ResponseMessage, StartMessage, FinishMessage
 from dirb.target import Target
 from dirb.wordlist_file import WordlistFile
@@ -19,6 +20,10 @@ def create_extension_list(extensions):
 
     return result
 
+class ModeStats:
+    requests = 0
+    valid_responses = 0
+
 class Mode:
 
     def __init__(self, wordlist: WordlistFile, target: Target, extensions):
@@ -27,6 +32,7 @@ class Mode:
         self.extensions = create_extension_list(extensions)
         
         self.validator = ResponseValidator()
+        self.stats = ModeStats()
 
         # tracking for wordlist
         self.current_directory = '/'
@@ -36,7 +42,7 @@ class Mode:
         return self.wordlist.index < self.wordlist.lines or not self.directory_queue.empty()
 
     def enumerate(self, request_queue, response_queue, output_queue):
-        logger.debug('Mode is beginning enumeration...')
+        logger.info('Beginning enumeration...')
         output_queue.put(StartMessage())
 
         while self.is_wordlist_not_exhausted() or not request_queue.empty() or not response_queue.empty():
@@ -45,8 +51,8 @@ class Mode:
             # Ensure requests have finished
             request_queue.join()
 
-        output_queue.put(FinishMessage())
-        logger.debug('Mode is finished enumerating.')
+        output_queue.put(FinishMessage(self.stats))
+        logger.info(f'Finished enumerating. Sent {Color.BLUE}{self.stats.requests}{Color.RESET} requests. Identified {Color.GREEN}{self.stats.valid_responses}{Color.RESET} valid responses.')
 
     def enumerate_wordlist(self, request_queue, response_queue, output_queue):
         while self.is_wordlist_not_exhausted() or not request_queue.empty() or not response_queue.empty():
@@ -79,6 +85,7 @@ class Mode:
 
         for extension in self.extensions:
             for word in words:
+                self.stats.requests += 1
                 request_queue.put(f'{self.target}{self.current_directory}{word}{extension}')
 
         if len(words) < WORDS_TO_PULL:
@@ -102,3 +109,4 @@ class Mode:
     def process_valid_response(self, response, output_queue):
         logger.debug(f'Processing valid response: [{response.status_code}] {response.url}')
         output_queue.put(ResponseMessage(response))
+        self.stats.valid_responses += 1

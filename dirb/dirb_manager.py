@@ -18,7 +18,6 @@ class DirbManager:
         self.num_threads = num_threads
 
     def enumerate(self):
-        logger.info('Beginning enumeration...')
         status = DirbStatus()
 
         # The max number of requests in the queue at any given time
