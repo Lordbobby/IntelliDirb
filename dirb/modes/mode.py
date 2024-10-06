@@ -1,15 +1,12 @@
-from queue import Queue, PriorityQueue
+from queue import Queue
 from time import time_ns
 
-from urllib3 import request
-
-from dirb.enum.request_queue import RequestQueue
+from dirb.enum.request_queue import Priority
 from dirb.enum.response_validator import ResponseValidator
 from dirb.output import logger
 from dirb.output.color import Color
 from dirb.output.messages import ResponseMessage, StartMessage, FinishMessage
 from dirb.target import Target
-from dirb.util.prioritized_item import PrioritizedItem
 from dirb.wordlist_file import WordlistFile
 
 WORDS_TO_PULL = 100
@@ -90,6 +87,10 @@ class Mode:
         self.current_directory = self.directory_queue.get()
         logger.debug(f'Reset wordlist with new directory: {self.current_directory}')
 
+    def add_request(self, request_queue, url, priority=Priority.NORMAL):
+        self.stats.requests += 1
+        request_queue.add_request(url, priority)
+
     def update_request_queue(self, request_queue):
         if self.wordlist.index >= self.wordlist.lines:
             self.reset_wordlist()
@@ -101,8 +102,7 @@ class Mode:
 
         for extension in self.extensions:
             for word in words:
-                self.stats.requests += 1
-                request_queue.add_request(f'{self.target}{self.current_directory}{word}{extension}')
+                self.add_request(request_queue, f'{self.target}{self.current_directory}{word}{extension}')
 
     def handle_responses(self, request_queue, response_queue, output_queue):
         # counter so it doesn't run forever
@@ -122,4 +122,6 @@ class Mode:
     def process_valid_response(self, response, request_queue, output_queue):
         logger.debug(f'Processing valid response: [{response.status_code}] {response.url}')
         output_queue.put(ResponseMessage(response))
+
         self.stats.valid_responses += 1
+        request_queue.add_valid_url(response.url)

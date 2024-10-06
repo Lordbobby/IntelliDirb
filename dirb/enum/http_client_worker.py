@@ -1,9 +1,10 @@
 import requests
 from queue import Queue
 
+from dirb.enum.request_queue import RequestQueue
 from dirb.output import logger
 
-def send_queued_requests(request_queue: Queue, response_queue: Queue, status):
+def send_queued_requests(request_queue: RequestQueue, response_queue: Queue, status):
     logger.debug('Spinning up HTTP client worker...')
 
     while status.running:
