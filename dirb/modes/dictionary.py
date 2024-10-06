@@ -1,6 +1,6 @@
-from venv import logger
-
+from dirb.enum.request_queue import RequestQueue
 from dirb.modes.mode import Mode
+from dirb.output import logger
 from dirb.output.messages import RecurseMessage
 
 def can_recurse(response):
@@ -11,8 +11,8 @@ def can_recurse(response):
 
 class Dictionary(Mode):
 
-    def process_valid_response(self, response, output_queue):
-        super().process_valid_response(response, output_queue)
+    def process_valid_response(self, response, request_queue: RequestQueue, output_queue):
+        super().process_valid_response(response, request_queue, output_queue)
 
         if can_recurse(response):
             directory = response.headers['Location']

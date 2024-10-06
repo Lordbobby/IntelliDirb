@@ -1,11 +1,15 @@
-from queue import Queue
+from queue import Queue, PriorityQueue
 from time import time_ns
 
+from urllib3 import request
+
+from dirb.enum.request_queue import RequestQueue
 from dirb.enum.response_validator import ResponseValidator
 from dirb.output import logger
 from dirb.output.color import Color
 from dirb.output.messages import ResponseMessage, StartMessage, FinishMessage
 from dirb.target import Target
+from dirb.util.prioritized_item import PrioritizedItem
 from dirb.wordlist_file import WordlistFile
 
 WORDS_TO_PULL = 100
@@ -66,7 +70,7 @@ class Mode:
 
     def enumerate_wordlist(self, request_queue, response_queue, output_queue):
         while self.is_wordlist_not_exhausted() or not request_queue.empty() or not response_queue.empty():
-            self.handle_responses(response_queue, output_queue)
+            self.handle_responses(request_queue, response_queue, output_queue)
             self.update_request_queue(request_queue)
 
     def recurse_directory(self, path: str):
@@ -98,9 +102,9 @@ class Mode:
         for extension in self.extensions:
             for word in words:
                 self.stats.requests += 1
-                request_queue.put(f'{self.target}{self.current_directory}{word}{extension}')
+                request_queue.add_request(f'{self.target}{self.current_directory}{word}{extension}')
 
-    def handle_responses(self, response_queue: Queue, output_queue):
+    def handle_responses(self, request_queue, response_queue, output_queue):
         # counter so it doesn't run forever
         processed = 0
         
@@ -113,9 +117,9 @@ class Mode:
             if not self.validator.validate_response(response):
                 continue
             
-            self.process_valid_response(response, output_queue)
+            self.process_valid_response(response, request_queue, output_queue)
 
-    def process_valid_response(self, response, output_queue):
+    def process_valid_response(self, response, request_queue, output_queue):
         logger.debug(f'Processing valid response: [{response.status_code}] {response.url}')
         output_queue.put(ResponseMessage(response))
         self.stats.valid_responses += 1

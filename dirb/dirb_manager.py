@@ -3,6 +3,7 @@ from queue import Queue
 from threading import Thread
 
 from dirb.enum.http_client_worker import send_queued_requests
+from dirb.enum.request_queue import RequestQueue
 from dirb.output import logger
 from dirb.output.output_worker import handle_output
 
@@ -24,7 +25,7 @@ class DirbManager:
         max_requests_in_queue = self.num_threads*1000
 
         # Queues are used to pass information between threads
-        request_queue = Queue(maxsize=max_requests_in_queue)
+        request_queue = RequestQueue(maxsize=max_requests_in_queue)
         response_queue = Queue(maxsize=0)
         output_queue = Queue(maxsize=0)
 
