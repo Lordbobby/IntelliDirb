@@ -1,9 +1,7 @@
 from time import time_ns
-
 from requests import Response
 
 from dirb.output.color import Color
-
 
 class Message:
     def __init__(self, message_type):
@@ -72,5 +70,17 @@ class LogMessage(Message):
     def to_csv_string(self):
         return ''
 
-    def to_console_string(self, *kwargs):
+    def to_console_string(self):
         return self.message
+
+class RecurseMessage(Message):
+    def __init__(self, directory):
+        super().__init__('Recurse')
+
+        self.directory = directory
+
+    def to_csv_string(self):
+        return super().to_csv_string(self.directory)
+
+    def to_console_string(self):
+        return f'{Color.YELLOW} ->{Color.RESET} Identified likely directory: {Color.GREEN}{self.directory}{Color.RESET}'

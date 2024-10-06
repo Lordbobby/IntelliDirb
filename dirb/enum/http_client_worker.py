@@ -13,7 +13,7 @@ def send_queued_requests(request_queue: Queue, response_queue: Queue, status):
         request_url = request_queue.get()
         logger.debug(f'Sending request to: {request_url}')
 
-        response = requests.get(request_url)
+        response = requests.get(request_url, allow_redirects=False)
 
         response_queue.put(response)
         request_queue.task_done()
