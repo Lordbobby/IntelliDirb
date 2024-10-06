@@ -2,6 +2,9 @@ import sys
 from argparse import ArgumentParser
 from art import tprint
 
+from dirb.modes.combined import Combined
+from dirb.modes.content import Content
+from dirb.modes.service import Service
 from dirb.output import logger
 from dirb.target import Target
 from dirb.dirb_manager import DirbManager
@@ -55,7 +58,16 @@ if __name__ == '__main__':
     target = Target(args.target)
 
     # Setup mode
-    mode = Dictionary(wordlist, target, args.extensions)
+    mode = None
+
+    if args.mode == 'content':
+        mode = Content(wordlist, target, args.extensions)
+    elif args.mode == 'service':
+        mode = Service(wordlist, target, args.extensions)
+    elif args.mode == 'all':
+        mode = Combined(wordlist, target, args.extensions)
+    else:
+        mode = Dictionary(wordlist, target, args.extensions)
 
     dirb = DirbManager(mode, output_handler, args.threads)
     dirb.enumerate()
