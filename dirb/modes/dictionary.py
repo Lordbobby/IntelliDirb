@@ -14,7 +14,6 @@ def can_recurse(response):
     return False
 
 class Dictionary(Mode):
-
     def process_valid_response(self, response, request_queue: RequestQueue, output_queue):
         super().process_valid_response(response, request_queue, output_queue)
 

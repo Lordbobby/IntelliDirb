@@ -13,7 +13,6 @@ def count_lines(file_path):
         return lines
 
 class WordlistFile:
-
     def __init__(self, file_path):
         self.file_path = file_path
         # TODO validate file
