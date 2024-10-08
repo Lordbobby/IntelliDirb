@@ -55,9 +55,3 @@ class DirbManager:
         output_queue.join()
 
         status.running = False
-
-        # Clean up threads once complete
-        for worker in request_workers:
-            worker.join()
-
-        output_worker.join()

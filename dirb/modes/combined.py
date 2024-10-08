@@ -1,7 +1,12 @@
-from dirb.enum.request_queue import RequestQueue
-from dirb.modes.dictionary import Dictionary
+from dirb.modes.dictionary import ParsedDictionary
+from dirb.modes.parser.href import HrefParser
+from dirb.modes.parser.src import SrcParser
+from dirb.target import Target
+from dirb.wordlist_file import WordlistFile
 
-class Combined(Dictionary):
+class Combined(ParsedDictionary):
 
-    def process_valid_response(self, response, request_queue: RequestQueue, output_queue):
-        super().process_valid_response(response, request_queue, output_queue)
+    def __init__(self, wordlist: WordlistFile, target: Target, extensions):
+        super().__init__(wordlist, target, extensions)
+
+        self.parsers = [ HrefParser(), SrcParser() ]

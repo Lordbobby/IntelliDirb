@@ -37,7 +37,7 @@ class ParsedDictionary(Dictionary):
         if not len(response.content):
             return
 
-        content = str(response.content)
+        content = response.text
 
         for parser in self.parsers:
             request_urls = parser.parse_for_requests(content, response, self.target)
