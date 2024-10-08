@@ -4,6 +4,7 @@ from art import tprint
 
 from dirb.modes.combined import Combined
 from dirb.modes.content import Content
+from dirb.modes.script import Script
 from dirb.modes.service import Service
 from dirb.output import logger
 from dirb.target import Target
@@ -64,6 +65,8 @@ if __name__ == '__main__':
         mode = Content(wordlist, target, args.extensions)
     elif args.mode == 'service':
         mode = Service(wordlist, target, args.extensions)
+    elif args.mode == 'script':
+        mode = Script(wordlist, target, args.extensions)
     elif args.mode == 'all':
         mode = Combined(wordlist, target, args.extensions)
     else:
