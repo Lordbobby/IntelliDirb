@@ -52,8 +52,8 @@ if __name__ == '__main__':
     if args.out_file:
         output_handler.set_output_file(args.out_file)
 
-    # Setup wordlist
-    wordlist = WordlistFile(args.wordlist)
+    # Wordlist file
+    wordlist = args.wordlist
 
     # Setup target
     target = Target(args.target)

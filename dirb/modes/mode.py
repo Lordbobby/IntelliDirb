@@ -29,8 +29,8 @@ class ModeStats:
 
 class Mode:
 
-    def __init__(self, wordlist: WordlistFile, target: Target, extensions):
-        self.wordlist = wordlist
+    def __init__(self, wordlist: str, target: Target, extensions):
+        self.wordlist = self.get_wordlist_file(wordlist)
         self.target = target.get_base_url()
         self.extensions = create_extension_list(extensions)
         
@@ -40,6 +40,9 @@ class Mode:
         # tracking for wordlist
         self.current_directory = '/'
         self.directory_queue = Queue(maxsize=0)
+
+    def get_wordlist_file(self, wordlist_path):
+        return WordlistFile(wordlist_path)
 
     def is_wordlist_not_exhausted(self):
         return self.wordlist.index < self.wordlist.lines or not self.directory_queue.empty()

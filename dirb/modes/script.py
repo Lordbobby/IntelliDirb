@@ -5,7 +5,7 @@ from dirb.wordlist.wordlist_file import WordlistFile
 
 class Script(ParsedDictionary):
 
-    def __init__(self, wordlist: WordlistFile, target: Target, extensions):
+    def __init__(self, wordlist, target: Target, extensions):
         super().__init__(wordlist, target, extensions)
 
         self.parsers = [ ScriptParser() ]

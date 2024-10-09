@@ -4,6 +4,7 @@ from dirb.output import logger
 from dirb.output.color import Color
 from dirb.output.messages import RecurseMessage
 from dirb.target import Target
+from dirb.wordlist.extended_wordlist import ExtendedWordlist
 from dirb.wordlist.wordlist_file import WordlistFile
 
 
@@ -25,10 +26,13 @@ class Dictionary(Mode):
             logger.debug(f'Recursing {directory} from response url {response.url} and request url {response.request.url}')
 
 class ParsedDictionary(Dictionary):
-    def __init__(self, wordlist: WordlistFile, target: Target, extensions):
+    def __init__(self, wordlist, target: Target, extensions):
         super().__init__(wordlist, target, extensions)
 
         self.parsers = []
+
+    def get_wordlist_file(self, wordlist_path):
+        return ExtendedWordlist(wordlist_path)
 
     def process_valid_response(self, response, request_queue: RequestQueue, output_queue):
         super().process_valid_response(response, request_queue, output_queue)
@@ -60,5 +64,6 @@ class ParsedDictionary(Dictionary):
         logger.info(f'Found {Color.GREEN}{len(request_urls)}{Color.RESET} URL from page content.')
 
     def add_words(self, words):
-        # TODO add words to supplemental wordlist
+        self.wordlist.add_words(words)
+        
         logger.info(f'Adding {len(words)} words to supplemental wordlist.')
