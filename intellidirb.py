@@ -11,7 +11,7 @@ from dirb.target import Target
 from dirb.dirb_manager import DirbManager
 from dirb.modes.dictionary import Dictionary
 from dirb.output.output_handler import OutputHandler
-from dirb.wordlist_file import WordlistFile
+from dirb.wordlist.wordlist_file import WordlistFile
 
 class CustomParser(ArgumentParser):
     def error(self, message):
