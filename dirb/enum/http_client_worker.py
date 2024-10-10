@@ -15,6 +15,7 @@ def send_queued_requests(request_queue: RequestQueue, response_queue: Queue, sta
         logger.debug(f'Sending request to: {request_url}')
 
         response = requests.get(request_url, allow_redirects=False)
+        response.close()
 
         response_queue.put(response)
         request_queue.task_done()
