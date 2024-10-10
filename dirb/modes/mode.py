@@ -103,8 +103,8 @@ class Mode:
 
         logger.debug(f'Adding requests to queue based on {len(words)} words and this extension list: {self.extensions}')
 
-        for extension in self.extensions:
-            for word in words:
+        for word in words:
+            for extension in self.extensions:
                 self.add_request(request_queue, f'{self.target}{self.current_directory}{word}{extension}')
 
     def handle_responses(self, request_queue, response_queue, output_queue):
