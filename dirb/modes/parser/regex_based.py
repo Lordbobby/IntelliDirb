@@ -9,6 +9,7 @@ def calculate_base_url(response):
 
 class RegexBasedParser(Parser):
     def __init__(self, regex):
+        super().__init__()
         self.regex = regex
 
     def find_paths_in_response(self, content, regex):

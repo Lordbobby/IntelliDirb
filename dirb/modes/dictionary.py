@@ -48,7 +48,7 @@ class ParsedDictionary(Dictionary):
             request_urls = parsed_results['urls']
             words = parsed_results['words']
 
-            logger.debug(f'Ran {parser} against response content and got {len(request_urls)} URLs and {len(words)} words.')
+            logger.debug(f'Ran {parser.name} against response content and got {len(request_urls)} URLs and {len(words)} words.')
 
             if len(request_urls):
                 self.add_requests(request_urls, request_queue)

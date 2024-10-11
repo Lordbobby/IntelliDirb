@@ -1,4 +1,7 @@
 class Parser:
+    def __init__(self):
+        self.name = type(self).__name__
+
     def parse(self, content, response, target):
         return []
 
