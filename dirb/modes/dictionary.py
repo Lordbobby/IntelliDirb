@@ -1,13 +1,12 @@
+import re
 from time import time_ns
 
 from dirb.enum.request_queue import RequestQueue, Priority
 from dirb.modes.mode import Mode
 from dirb.output import logger
-from dirb.output.color import Color
 from dirb.output.messages import RecurseMessage
 from dirb.target import Target
 from dirb.wordlist.extended_wordlist import ExtendedWordlist
-from dirb.wordlist.wordlist_file import WordlistFile
 
 
 def can_recurse(response):
@@ -22,6 +21,7 @@ class Dictionary(Mode):
 
         if can_recurse(response):
             directory = response.headers['Location']
+            directory = re.findall('(?<=(?<!/)/)(?!/)[^?&#]+', directory)[0]
 
             self.recurse_directory(directory)
             output_queue.put(RecurseMessage(directory))
