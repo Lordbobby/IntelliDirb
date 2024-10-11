@@ -16,7 +16,7 @@ class RegexBasedParser(Parser):
 
         return matches
 
-    def parse_for_requests(self, content, response, target):
+    def parse(self, content, response, target):
         found_paths = self.find_paths_in_response(content, self.regex)
         request_urls = []
 
@@ -30,4 +30,4 @@ class RegexBasedParser(Parser):
 
             request_urls.append(url)
 
-        return request_urls
+        return self._build_results(urls=request_urls)

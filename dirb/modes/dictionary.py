@@ -44,8 +44,9 @@ class ParsedDictionary(Dictionary):
         content = response.text
 
         for parser in self.parsers:
-            request_urls = parser.parse_for_requests(content, response, self.target)
-            words = parser.parse_for_words(content, response)
+            parsed_results = parser.parse(content, response, self.target)
+            request_urls = parsed_results['urls']
+            words = parsed_results['words']
 
             logger.debug(f'Ran {parser} against response content and got {len(request_urls)} URLs and {len(words)} words.')
 
@@ -65,5 +66,5 @@ class ParsedDictionary(Dictionary):
 
     def add_words(self, words):
         self.wordlist.add_words(words)
-        
+
         logger.info(f'Adding {len(words)} words to supplemental wordlist.')

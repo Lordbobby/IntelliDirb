@@ -9,7 +9,7 @@ from dirb.output.messages import ResponseMessage, StartMessage, FinishMessage
 from dirb.target import Target
 from dirb.wordlist.wordlist_file import WordlistFile
 
-WORDS_TO_PULL = 100
+WORDS_TO_PULL = 500
 
 def create_extension_list(extensions):
     result = ['']

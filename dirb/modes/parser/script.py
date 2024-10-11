@@ -25,8 +25,8 @@ class ScriptParser(RegexBasedParser):
 
         return paths
 
-    def parse_for_requests(self, content, response, target):
+    def parse(self, content, response, target):
         if not response.url.endswith('.js'):
             content = grab_script_data(content)
 
-        return super().parse_for_requests(content, response, target)
+        return super().parse(content, response, target)
