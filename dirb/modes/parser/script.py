@@ -13,19 +13,19 @@ class ScriptParser(RegexBasedParser):
 
     def find_paths_in_response(self, content, regex):
         js_strings = super().find_paths_in_response(content, regex)
-        print(js_strings)
         paths = []
 
         for string in js_strings:
-            if '/' not in string or '</' in string:
+            if '/' not in string or '</' in string or '//' in string:
                 continue
 
-            if '//' not in string:
-                paths.append(string)
+            # from testing, highly unlikely anything this long is a valid path to test
+            if len(string) > 200:
                 continue
 
-            matches = re.findall('/(?<=(?<!/)/)(?!/)[^?:*&#\']+', string)
-            [paths.append(match) for match in matches]
+            matches = re.findall('[^?&=:#]+', string)
+
+            paths.append(matches[0])
 
         return paths
 
