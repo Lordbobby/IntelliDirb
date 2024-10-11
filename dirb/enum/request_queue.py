@@ -21,7 +21,7 @@ class RequestQueue(PriorityQueue):
 
     def get(self, block = True, timeout = None):
         self.grabbed_urls += 1
-        if self.grabbed_urls % 1000:
+        if self.grabbed_urls % 1000 == 0:
             logger.info(f'Sent {self.grabbed_urls} requests.')
 
         return super().get(block, timeout).item
