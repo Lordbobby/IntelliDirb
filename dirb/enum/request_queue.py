@@ -7,19 +7,14 @@ class Priority:
     NORMAL = 5
 
 class RequestQueue(PriorityQueue):
-    valid_urls = []
+    tested_urls = []
 
     def add_request(self, url, priority=Priority.NORMAL):
+        if url in self.tested_urls:
+            return
+
+        self.tested_urls.append(url)
         self.put(PrioritizedItem(priority, url))
 
-    def add_valid_url(self, url):
-        self.valid_urls.append(url)
-
     def get(self, block = True, timeout = None):
-        url = super().get(block, timeout).item
-
-        while url in self.valid_urls:
-            self.task_done()
-            url = super().get(block, timeout).item
-
-        return url
+        return super().get(block, timeout).item
