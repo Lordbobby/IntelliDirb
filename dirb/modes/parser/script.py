@@ -9,14 +9,14 @@ def grab_script_data(content):
 
 class ScriptParser(RegexBasedParser):
     def __init__(self):
-        super().__init__('[\'"]([^\'"\s\n]*)[\'"?]+')
+        super().__init__('[\'"]([^\'"\s\)\}\[\$]*)[\'"?]+')
 
     def find_paths_in_response(self, content, regex):
         js_strings = super().find_paths_in_response(content, regex)
         paths = []
 
         for string in js_strings:
-            if '/' not in string or '</' in string or '//' in string or '/**' in string:
+            if '/' not in string or '</' in string or '//' in string or '/**' in string or '\n' in string:
                 continue
 
             # from testing, highly unlikely anything this long is a valid path to test
