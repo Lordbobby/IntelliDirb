@@ -63,7 +63,7 @@ class Mode:
         # Log summary
         run_time = (time_ns() - self.stats.start) / 1e9
         run_message = f'Finished enumerating in {Color.BLUE}{run_time:.2f}{Color.RESET} seconds.'
-        requests_message = f'Sent {Color.BLUE}{self.stats.requests}{Color.RESET} requests.'
+        requests_message = f'Sent {Color.BLUE}{len(request_queue.tested_urls)}{Color.RESET} requests.'
         responses_message = f'Identified {Color.GREEN}{self.stats.valid_responses}{Color.RESET} valid responses.'
 
         logger.info(f'{run_message} {requests_message} {responses_message}')
