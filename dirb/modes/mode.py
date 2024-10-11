@@ -99,6 +99,10 @@ class Mode:
             self.reset_wordlist()
             return
 
+        if request_queue.qsize() > WORDS_TO_PULL * 10:
+            logger.debug('Queue sufficiently full, skipping adding requests for now.')
+            return
+
         words = self.wordlist.get_words(WORDS_TO_PULL)
 
         logger.debug(f'Adding requests to queue based on {len(words)} words and this extension list: {self.extensions}')

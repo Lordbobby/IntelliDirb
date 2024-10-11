@@ -21,11 +21,8 @@ class DirbManager:
     def enumerate(self):
         status = DirbStatus()
 
-        # The max number of requests in the queue at any given time
-        max_requests_in_queue = self.num_threads*1000
-
         # Queues are used to pass information between threads
-        request_queue = RequestQueue(maxsize=max_requests_in_queue)
+        request_queue = RequestQueue(maxsize=0)
         response_queue = Queue(maxsize=0)
         output_queue = Queue(maxsize=0)
 
