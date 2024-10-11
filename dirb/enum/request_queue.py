@@ -1,3 +1,4 @@
+import time
 from queue import PriorityQueue
 
 from dirb.util.prioritized_item import PrioritizedItem
@@ -14,7 +15,7 @@ class RequestQueue(PriorityQueue):
             return
 
         self.tested_urls.append(url)
-        self.put(PrioritizedItem(priority, url))
+        self.put(PrioritizedItem(priority, time.time_ns(), url))
 
     def get(self, block = True, timeout = None):
         return super().get(block, timeout).item
