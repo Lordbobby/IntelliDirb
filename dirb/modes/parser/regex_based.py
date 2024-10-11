@@ -29,6 +29,9 @@ class RegexBasedParser(Parser):
             if not path.startswith('/'):
                 url = f'{base_url}{path}'
 
+            # collapse to clean it up
+            url = url.replace('/./', '/')
+
             request_urls.append(url)
 
         return self._build_results(urls=request_urls)
