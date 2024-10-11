@@ -1,7 +1,10 @@
-from dirb.enum.request_queue import RequestQueue
-from dirb.modes.dictionary import Dictionary
+from dirb.modes.dictionary import ParsedDictionary
+from dirb.modes.parser.service import ServiceParser
+from dirb.target import Target
 
-class Service(Dictionary):
+class Service(ParsedDictionary):
 
-    def process_valid_response(self, response, request_queue: RequestQueue, output_queue):
-        super().process_valid_response(response, request_queue, output_queue)
+    def __init__(self, wordlist, target: Target, extensions):
+        super().__init__(wordlist, target, extensions)
+
+        self.parsers = [ ServiceParser() ]

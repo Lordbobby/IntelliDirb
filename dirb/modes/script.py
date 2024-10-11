@@ -1,7 +1,6 @@
 from dirb.modes.dictionary import ParsedDictionary
 from dirb.modes.parser.script import ScriptParser
 from dirb.target import Target
-from dirb.wordlist.wordlist_file import WordlistFile
 
 class Script(ParsedDictionary):
 
