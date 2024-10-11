@@ -24,6 +24,8 @@ class RegexBasedParser(Parser):
         base_url = calculate_base_url(response)
 
         for path in found_paths:
+            path = path.replace('\/', '/')
+
             url = f'{target}{path}'
 
             if not path.startswith('/'):
