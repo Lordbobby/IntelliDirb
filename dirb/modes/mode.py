@@ -127,4 +127,3 @@ class Mode:
         output_queue.put(ResponseMessage(response))
 
         self.stats.valid_responses += 1
-        request_queue.add_valid_url(response.url)
