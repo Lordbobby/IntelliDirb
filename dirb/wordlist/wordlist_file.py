@@ -1,6 +1,8 @@
 from mmap import mmap
 
 from dirb.output import logger
+from dirb.output.color import Color
+
 
 # https://stackoverflow.com/a/850962
 def count_lines(file_path):
@@ -20,6 +22,8 @@ class WordlistFile:
 
         self.index = 0
         self.byte_index = 0
+
+        logger.info(f'Loaded wordlist file with {Color.GREEN}{self.lines}{Color.RESET} words.')
 
     def reset_index(self):
         logger.debug('Resetting wordlist index.')

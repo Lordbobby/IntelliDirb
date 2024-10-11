@@ -1,3 +1,5 @@
+from time import time_ns
+
 from dirb.enum.request_queue import RequestQueue, Priority
 from dirb.modes.mode import Mode
 from dirb.output import logger
@@ -43,18 +45,31 @@ class ParsedDictionary(Dictionary):
 
         content = response.text
 
+        total_urls = 0
+        total_words = 0
+
         for parser in self.parsers:
+            start = time_ns()
             parsed_results = parser.parse(content, response, self.target)
+            total_time = time_ns() - start
             request_urls = parsed_results['urls']
             words = parsed_results['words']
 
-            logger.debug(f'Ran {parser.name} against response content and got {len(request_urls)} URLs and {len(words)} words.')
+            len_urls = len(request_urls)
+            len_words = len(words)
 
-            if len(request_urls):
+            logger.debug(f'Ran {parser.name} against response content in {total_time/1e9:.2f} seconds and got {len_urls} URLs and {len_words} words.')
+
+            if len_urls:
                 self.add_requests(request_urls, request_queue)
+                total_urls += len_urls
 
-            if len(words):
+            if len_words:
                 self.add_words(words)
+                total_words += len_words
+
+        if total_urls or total_words:
+            logger.info(f'Parsers identified {total_urls} URLS and {total_words} words from {response.url} response.')
 
     def add_requests(self, request_urls, request_queue):
         for url in request_urls:
@@ -62,9 +77,5 @@ class ParsedDictionary(Dictionary):
 
             logger.debug(f'Adding request from page content: {url}')
 
-        logger.info(f'Found {Color.GREEN}{len(request_urls)}{Color.RESET} URL from page content.')
-
     def add_words(self, words):
         self.wordlist.add_words(words)
-
-        logger.info(f'Adding {len(words)} words to supplemental wordlist.')
