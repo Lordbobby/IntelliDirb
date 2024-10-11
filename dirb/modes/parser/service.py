@@ -1,12 +1,17 @@
+import os
+import sys
+
 from dirb.modes.parser.filter.apache import ApacheFilter
 from dirb.modes.parser.filter.nginx import NginxFilter
 from dirb.modes.parser.filter.php import PHPFilter
 from dirb.modes.parser.filter.wordpress import WordPressFilter
 from dirb.modes.parser.parser import Parser
+from dirb.output import logger
+from dirb.output.color import Color
 
-WORDLIST_DIR = './wordlists/'
+WORDLIST_DIR = f'{os.path.dirname(sys.modules[__name__].__file__)}/wordlists/'
 
-def build_results_from_wordlists(wordlists):
+def build_results_from_wordlists(wordlists, target):
     urls = []
     words = []
 
@@ -14,10 +19,14 @@ def build_results_from_wordlists(wordlists):
         with open(wordlist, 'r') as file:
             line = file.readline()
             while line:
-                if '/' in line:
-                    urls.append(line.rstrip())
+                line = line.rstrip()
+
+                if line.startswith('/'):
+                    urls.append(f'{target}{line}')
+                elif '/' in line:
+                    urls.append(f'{target}/{line}')
                 else:
-                    words.append(line.rstrip())
+                    words.append(line)
 
                 line = file.readline()
 
@@ -41,12 +50,14 @@ class ServiceParser(Parser):
         wordlists = []
 
         for service_filter, wordlist in self.filter_map.items():
-            if service_filter.service_name in wordlists:
+            if service_filter.service_name in self.identified:
                 continue
 
             if service_filter.is_service(content, response):
+                logger.info(f'Identified service {Color.GREEN}{service_filter.service_name}{Color.RESET} from response.')
+
                 wordlists.append(wordlist)
                 self.identified.append(service_filter.service_name)
 
-        return build_results_from_wordlists(wordlists)
+        return build_results_from_wordlists(wordlists, target)
 

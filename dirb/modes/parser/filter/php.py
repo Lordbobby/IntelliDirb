@@ -6,4 +6,4 @@ class PHPFilter(ServiceFilter):
         super().__init__('php')
 
     def is_service(self, content, response):
-        return response.url.endswith('.php')
+        return response.url.endswith('.php') and response.status_code == 200
