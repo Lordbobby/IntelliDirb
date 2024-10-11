@@ -18,6 +18,9 @@ class RegexBasedParser(Parser):
         return matches
 
     def parse(self, content, response, target):
+        if response.url.split('.')[:-1] in ['jpg', 'png', 'svg', 'gif']:
+            return self._build_results()
+
         found_paths = self.find_paths_in_response(content, self.regex)
         request_urls = []
 

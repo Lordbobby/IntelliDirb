@@ -69,7 +69,7 @@ class ParsedDictionary(Dictionary):
                 total_words += len_words
 
         if total_urls or total_words:
-            logger.info(f'Parsers identified {total_urls} URLS and {total_words} words from {response.url} response.')
+            logger.debug(f'Parsers identified {total_urls} URLS and {total_words} words from {response.url} response.')
 
     def add_requests(self, request_urls, request_queue):
         for url in request_urls:
