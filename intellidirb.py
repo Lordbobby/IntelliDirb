@@ -1,5 +1,5 @@
 import sys
-from argparse import ArgumentParser
+from argparse import ArgumentParser, BooleanOptionalAction
 from art import tprint
 
 from dirb.modes.combined import Combined
@@ -7,11 +7,11 @@ from dirb.modes.content import Content
 from dirb.modes.script import Script
 from dirb.modes.service import Service
 from dirb.output import logger
+from dirb.output.color import Color
 from dirb.target import Target
 from dirb.dirb_manager import DirbManager
 from dirb.modes.dictionary import Dictionary
 from dirb.output.output_handler import OutputHandler
-from dirb.wordlist.wordlist_file import WordlistFile
 
 class CustomParser(ArgumentParser):
     def error(self, message):
@@ -36,6 +36,8 @@ def setup_argument_parser():
     arg_parser.add_argument('-t', dest='threads', type=int, default=10, help='The number of threads to use (default=10).')
     arg_parser.add_argument('-l', dest='log_level', default='INFO', choices=['DEBUG', 'INFO', 'ERROR', 'CRITICAL'],
                             help='Log level for printed messages (default=INFO).')
+    arg_parser.add_argument('--no_colors', dest='colors', default=True, action=BooleanOptionalAction,
+                            help='Don\'t print colors to the console.')
 
     return arg_parser
 
@@ -51,6 +53,9 @@ if __name__ == '__main__':
 
     if args.out_file:
         output_handler.set_output_file(args.out_file)
+
+    if not args.colors:
+        Color.disable_colors()
 
     # Wordlist file
     wordlist = args.wordlist

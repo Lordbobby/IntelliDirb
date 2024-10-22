@@ -1,6 +1,5 @@
 from dirb.output import logger
 
-
 def handle_output(output_handler, output_queue, status):
     logger.debug('Spinning up output worker...')
 
