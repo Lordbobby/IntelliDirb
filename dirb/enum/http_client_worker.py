@@ -8,6 +8,7 @@ def send_queued_requests(request_queue: RequestQueue, response_queue: Queue, sta
     logger.debug('Spinning up HTTP client worker...')
 
     session = Session()
+    session.verify = False
 
     while status.running:
         if request_queue.empty():
@@ -16,10 +17,13 @@ def send_queued_requests(request_queue: RequestQueue, response_queue: Queue, sta
         request_url = request_queue.get()
         logger.debug(f'Sending request to: {request_url}')
 
-        response = session.get(request_url, allow_redirects=False)
-        response.close()
+        try:
+            response = session.get(request_url, allow_redirects=False)
+            response.close()
+            response_queue.put(response)
+        except Exception as error:
+            logger.error(f'Encountered {type(error).__name__} getting {request_url} with message: {error}')
 
-        response_queue.put(response)
         request_queue.task_done()
 
     logger.debug('HTTP client worker finished.')
