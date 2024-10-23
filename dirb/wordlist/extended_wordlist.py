@@ -8,22 +8,10 @@ class ExtendedWordlist(WordlistFile):
         self.supplemental = []
         self.supplemental_index = 0
 
-    def add_words(self, words):
+    def add_words(self, words, tag):
         for word in words:
             if word not in self.supplemental:
-                self.supplemental.append(word)
-
-    def add_words_from_file(self, file_path):
-        with open(file_path, 'r') as file:
-            line = file.readline()
-
-            while line:
-                line = line.rstrip()
-
-                if line not in self.supplemental:
-                   self.supplemental.append(line)
-
-                line = file.readline()
+                self.supplemental.append((word, tag))
 
     def reset_index(self):
         super().reset_index()

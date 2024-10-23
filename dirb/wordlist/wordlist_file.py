@@ -2,6 +2,7 @@ from mmap import mmap
 
 from dirb.output import logger
 from dirb.output.color import Color
+from dirb.output.stats.tag import Tag
 
 
 # https://stackoverflow.com/a/850962
@@ -43,7 +44,7 @@ class WordlistFile:
             words = []
             line = file.readline()
             while line:
-                words.append(line.rstrip())
+                words.append((line.rstrip(), Tag.DICTIONARY))
 
                 if len(words) >= num:
                     break

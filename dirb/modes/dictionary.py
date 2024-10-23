@@ -9,7 +9,6 @@ from dirb.target import Target
 from dirb.util.settings import Settings
 from dirb.wordlist.extended_wordlist import ExtendedWordlist
 
-
 def can_recurse(response):
     request_url = response.request.url
     if 'Location' in response.headers and f'{request_url}/'.endswith(response.headers['Location']):
@@ -17,8 +16,8 @@ def can_recurse(response):
     return False
 
 class Dictionary(Mode):
-    def process_valid_response(self, response, request_queue: RequestQueue, output_queue):
-        super().process_valid_response(response, request_queue, output_queue)
+    def process_valid_response(self, response, tag, request_queue: RequestQueue, output_queue):
+        super().process_valid_response(response, tag, request_queue, output_queue)
 
         if can_recurse(response) and Settings.can_recurse:
             directory = response.headers['Location']
@@ -37,8 +36,8 @@ class ParsedDictionary(Dictionary):
     def get_wordlist_file(self, wordlist_path):
         return ExtendedWordlist(wordlist_path)
 
-    def process_valid_response(self, response, request_queue: RequestQueue, output_queue):
-        super().process_valid_response(response, request_queue, output_queue)
+    def process_valid_response(self, response, tag, request_queue: RequestQueue, output_queue):
+        super().process_valid_response(response, tag, request_queue, output_queue)
 
         # If no page content, ignore
         if not len(response.content):
@@ -62,21 +61,21 @@ class ParsedDictionary(Dictionary):
             logger.debug(f'Ran {parser.name} against response content in {total_time/1e9:.2f} seconds and got {len_urls} URLs and {len_words} words.')
 
             if len_urls:
-                self.add_requests(request_urls, request_queue)
+                self.add_requests(request_urls, request_queue, parser.tag)
                 total_urls += len_urls
 
             if len_words:
-                self.add_words(words)
+                self.add_words(words, parser.tag)
                 total_words += len_words
 
         if total_urls or total_words:
             logger.debug(f'Parsers identified {total_urls} URLS and {total_words} words from {response.url} response.')
 
-    def add_requests(self, request_urls, request_queue):
+    def add_requests(self, request_urls, request_queue, tag):
         for url in request_urls:
-            self.add_request(request_queue, url, priority=Priority.IMMEDIATE)
+            self.add_request(request_queue, url, tag, priority=Priority.IMMEDIATE)
 
             logger.debug(f'Adding request from page content: {url}')
 
-    def add_words(self, words):
-        self.wordlist.add_words(words)
+    def add_words(self, words, tag):
+        self.wordlist.add_words(words, tag)

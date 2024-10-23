@@ -90,9 +90,9 @@ class Mode:
         self.current_directory = self.directory_queue.get()
         logger.debug(f'Reset wordlist with new directory: {self.current_directory}')
 
-    def add_request(self, request_queue, url, priority=Priority.NORMAL):
+    def add_request(self, request_queue, url, tag, priority=Priority.NORMAL):
         self.stats.requests += 1
-        request_queue.add_request(url, priority)
+        request_queue.add_request(url, tag, priority)
 
     def update_request_queue(self, request_queue):
         if self.wordlist.index >= self.wordlist.lines:
@@ -107,9 +107,9 @@ class Mode:
 
         logger.debug(f'Adding requests to queue based on {len(words)} words and this extension list: {self.extensions}')
 
-        for word in words:
+        for word, tag in words:
             for extension in self.extensions:
-                self.add_request(request_queue, f'{self.target}{self.current_directory}{word}{extension}')
+                self.add_request(request_queue, f'{self.target}{self.current_directory}{word}{extension}', tag)
 
     def handle_responses(self, request_queue, response_queue, output_queue):
         # counter so it doesn't run forever
@@ -117,17 +117,17 @@ class Mode:
         
         while not response_queue.empty() and processed < WORDS_TO_PULL:
             processed += 1
-            response = response_queue.get()
+            response, tag = response_queue.get()
 
             logger.debug(f'Mode processing response: [{response.status_code}] {response.url}')
 
             if not self.validator.validate_response(response):
                 continue
             
-            self.process_valid_response(response, request_queue, output_queue)
+            self.process_valid_response(response, tag, request_queue, output_queue)
 
-    def process_valid_response(self, response, request_queue, output_queue):
+    def process_valid_response(self, response, tag, request_queue, output_queue):
         logger.debug(f'Processing valid response: [{response.status_code}] {response.url}')
-        output_queue.put(ResponseMessage(response))
+        output_queue.put(ResponseMessage(response, tag))
 
         self.stats.valid_responses += 1

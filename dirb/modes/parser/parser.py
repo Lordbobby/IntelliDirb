@@ -1,6 +1,7 @@
 class Parser:
     def __init__(self):
         self.name = type(self).__name__
+        self.tag = self.name.replace('Parser', '')
 
     def parse(self, content, response, target):
         return []

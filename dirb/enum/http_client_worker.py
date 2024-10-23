@@ -14,13 +14,13 @@ def send_queued_requests(request_queue: RequestQueue, response_queue: Queue, sta
         if request_queue.empty():
             continue
 
-        request_url = request_queue.get()
+        request_url, tag = request_queue.get()
         logger.debug(f'Sending request to: {request_url}')
 
         try:
             response = session.get(request_url, allow_redirects=False)
             response.close()
-            response_queue.put(response)
+            response_queue.put((response, tag))
         except Exception as error:
             logger.error(f'Encountered {type(error).__name__} getting {request_url} with message: {error}')
 

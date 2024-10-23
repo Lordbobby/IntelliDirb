@@ -6,3 +6,4 @@ class PrioritizedItem:
     priority: int
     time: int
     item: Any=field(compare=False)
+    tag: Any=field(compare=False)
