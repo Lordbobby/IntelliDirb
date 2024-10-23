@@ -6,6 +6,7 @@ from dirb.modes.parser.filter.joomla import JoomlaFilter
 from dirb.modes.parser.filter.litespeed import LiteSpeedFilter
 from dirb.modes.parser.filter.nginx import NginxFilter
 from dirb.modes.parser.filter.php import PHPFilter
+from dirb.modes.parser.filter.phpbb import PhpBBFilter
 from dirb.modes.parser.filter.wordpress import WordPressFilter
 from dirb.modes.parser.parser import Parser
 from dirb.output import logger
@@ -46,6 +47,7 @@ class ServiceParser(Parser):
             WordPressFilter(): f'{WORDLIST_DIR}wordpress.fuzz.txt',
             JoomlaFilter(): f'{WORDLIST_DIR}urls-joomla-3.0.3.txt',
             LiteSpeedFilter(): f'{WORDLIST_DIR}litespeed.txt',
+            PhpBBFilter(): f'{WORDLIST_DIR}phpBB.txt',
         }
 
         self.identified = []
