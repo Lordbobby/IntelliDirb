@@ -38,9 +38,9 @@ def setup_argument_parser():
     arg_parser.add_argument('-t', dest='threads', type=int, default=10, help='The number of threads to use (default=10).')
     arg_parser.add_argument('-l', dest='log_level', default='INFO', choices=['DEBUG', 'INFO', 'ERROR', 'CRITICAL'],
                             help='Log level for printed messages (default=INFO).')
-    arg_parser.add_argument('--no_colors', dest='colors', default=True, action=BooleanOptionalAction,
+    arg_parser.add_argument('--no_colors', dest='colors', default=True, action='store_false',
                             help='Don\'t print colors to the console.')
-    arg_parser.add_argument('--no_recurse', dest='recurse', default=True, action=BooleanOptionalAction,
+    arg_parser.add_argument('--no_recurse', dest='recurse', default=True, action='store_false',
                             help='Don\'t attempt to recurse into directories.')
 
     return arg_parser
