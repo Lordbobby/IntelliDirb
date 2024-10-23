@@ -6,6 +6,7 @@ from dirb.modes.mode import Mode
 from dirb.output import logger
 from dirb.output.messages import RecurseMessage
 from dirb.target import Target
+from dirb.util.settings import Settings
 from dirb.wordlist.extended_wordlist import ExtendedWordlist
 
 
@@ -19,7 +20,7 @@ class Dictionary(Mode):
     def process_valid_response(self, response, request_queue: RequestQueue, output_queue):
         super().process_valid_response(response, request_queue, output_queue)
 
-        if can_recurse(response):
+        if can_recurse(response) and Settings.can_recurse:
             directory = response.headers['Location']
             directory = re.findall('(?<=(?<!/)/)(?!/)[^?&#]+', directory)[0]
 

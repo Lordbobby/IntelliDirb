@@ -12,6 +12,8 @@ from dirb.target import Target
 from dirb.dirb_manager import DirbManager
 from dirb.modes.dictionary import Dictionary
 from dirb.output.output_handler import OutputHandler
+from dirb.util.settings import Settings
+
 
 class CustomParser(ArgumentParser):
     def error(self, message):
@@ -38,6 +40,8 @@ def setup_argument_parser():
                             help='Log level for printed messages (default=INFO).')
     arg_parser.add_argument('--no_colors', dest='colors', default=True, action=BooleanOptionalAction,
                             help='Don\'t print colors to the console.')
+    arg_parser.add_argument('--no_recurse', dest='recurse', default=True, action=BooleanOptionalAction,
+                            help='Don\'t attempt to recurse into directories.')
 
     return arg_parser
 
@@ -76,6 +80,9 @@ if __name__ == '__main__':
         mode = Combined(wordlist, target, args.extensions)
     else:
         mode = Dictionary(wordlist, target, args.extensions)
+
+    # Settings
+    Settings.can_recurse = args.recurse
 
     dirb = DirbManager(mode, output_handler, args.threads)
     dirb.enumerate()
