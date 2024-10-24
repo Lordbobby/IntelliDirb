@@ -5,4 +5,4 @@ class PhpBBFilter(ServiceFilter):
         super().__init__('phpbb')
 
     def is_service(self, content, response):
-        return 'phpBB' in content
+        return 'phpBB Limited' in content

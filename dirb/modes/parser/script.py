@@ -9,7 +9,7 @@ def grab_script_data(content):
 
 class ScriptParser(RegexBasedParser):
     def __init__(self):
-        super().__init__('[\'"]([^\'"\s\)\}\[\$]*)[\'"?]+')
+        super().__init__('[\'"]([^\'"\s\)\}\[\$,\(|]*)[\'"?]+')
 
     def find_paths_in_response(self, content, regex):
         js_strings = super().find_paths_in_response(content, regex)
@@ -23,7 +23,7 @@ class ScriptParser(RegexBasedParser):
             if len(string) > 200:
                 continue
 
-            matches = re.findall('[^?&=:#*]+', string)
+            matches = re.findall('[^?&=:#*\\\\]+', string)
 
             paths.append(matches[0])
 

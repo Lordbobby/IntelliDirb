@@ -7,6 +7,24 @@ def calculate_base_url(response):
 
     return base_url
 
+def collapse_url(url):
+    orig_url = url
+    iterations = 0
+
+    while url.find('../') != -1 and iterations < 10:
+        end = url.find('../')
+        start = url.rfind('/', 0, end)
+        start = url.rfind('/', 0, start) + 1
+        end = end + 3
+        url = url[:start] + url[end:]
+
+        iterations += 1
+
+    if iterations == 10:
+        return orig_url
+
+    return url
+
 class RegexBasedParser(Parser):
     def __init__(self, regex):
         super().__init__()
@@ -36,6 +54,7 @@ class RegexBasedParser(Parser):
 
             # collapse to clean it up
             url = url.replace('/./', '/')
+            url = collapse_url(url)
 
             request_urls.append(url)
 

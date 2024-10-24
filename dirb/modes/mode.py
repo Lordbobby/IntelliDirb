@@ -129,6 +129,9 @@ class Mode:
 
         for word, tag in words:
             for extension in self.extensions:
+                if len(extension) and word.endswith(extension):
+                    continue
+
                 self.add_request(request_queue, f'{self.target}{self.current_directory}{word}{extension}', tag)
 
     def handle_responses(self, request_queue, response_queue, output_queue):

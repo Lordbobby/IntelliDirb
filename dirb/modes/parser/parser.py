@@ -10,9 +10,9 @@ class Parser:
         results = {'urls': [], 'words': []}
 
         if urls is not None:
-            results['urls'] = urls
+            results['urls'] = list(set(urls))
 
         if words is not None:
-            results['words']= words
+            results['words'] = list(set(words))
 
         return results
