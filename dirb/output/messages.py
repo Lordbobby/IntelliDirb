@@ -60,7 +60,7 @@ class ResponseMessage(Message):
         if 400 <= status_code:
             color = Color.RED
 
-        return f'{color}{str(status_code):6}{reset} {self.tag:12} {lines:6} {size:8} {self.response.url}'
+        return f'{color}{str(status_code):6}{reset} {self.tag:8} {lines:6} {size:8} {self.response.url}'
 
 class LogMessage(Message):
     def __init__(self, message):
@@ -85,3 +85,41 @@ class RecurseMessage(Message):
 
     def to_console_string(self):
         return f'{Color.YELLOW} ->{Color.RESET} Identified likely directory: {Color.GREEN}{self.directory}{Color.RESET}'
+
+class SummaryMessage(Message):
+    def __init__(self, stats):
+        super().__init__('Summary')
+
+        self.stats = stats
+
+    def to_csv_string(self):
+        return ''
+
+    def to_console_string(self):
+        header = f'\n{Color.BLUE}===={Color.RESET} Summary {Color.BLUE}===={Color.RESET}'
+        summary = f'Finished enumerating in {Color.BLUE}{self.stats.get_total_time():.2f}{Color.RESET} seconds.'
+        totals = f'Totals: {Color.GREEN}{self.stats.valid_responses}{Color.RESET} / {Color.RED}{self.stats.requests}{Color.RESET}'
+        parser_header = '\nBreakdown by request origin:'
+        lines = [header, summary, totals, parser_header]
+
+        name_length = len(max(self.stats.parser_stats.keys(), key=len))
+        valid_length = len(max([str(stat['valid']) for stat in self.stats.parser_stats.values()], key=len))
+
+        for parser, stats in self.stats.parser_stats.items():
+            parser_name = f'{parser}:'
+            valid_num = f'{Color.GREEN}{str(stats["valid"]):{valid_length}}{Color.RESET}'
+            total_num = f'{Color.BLUE}{str(stats["total"])}{Color.RESET}'
+
+            lines.append(f'- {parser_name:{name_length + 1}} {valid_num} / {total_num}')
+
+        return '\n'.join(lines)
+
+class ParserStatMessage(Message):
+    def __init__(self, parser, stats):
+        super().__init__('ParserStat')
+
+        self.parser = parser
+        self.stats = stats
+
+    def to_csv_string(self):
+        return super().to_csv_string(self.parser, self.stats['valid'], self.stats['total'])

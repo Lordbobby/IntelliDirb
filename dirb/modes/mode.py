@@ -5,7 +5,7 @@ from dirb.enum.request_queue import Priority
 from dirb.enum.response_validator import ResponseValidator
 from dirb.output import logger
 from dirb.output.color import Color
-from dirb.output.messages import ResponseMessage, StartMessage, FinishMessage
+from dirb.output.messages import ResponseMessage, StartMessage, FinishMessage, SummaryMessage, ParserStatMessage
 from dirb.target import Target
 from dirb.wordlist.wordlist_file import WordlistFile
 
@@ -26,6 +26,25 @@ class ModeStats:
     requests = 0
     valid_responses = 0
     start = 0
+    finish = 0
+    parser_stats = {}
+
+    def get_total_time(self):
+        return (self.finish - self.start) / 1e9
+
+    def add_request(self, parser):
+        if parser not in self.parser_stats:
+            self.parser_stats[parser] = { 'total': 0, 'valid': 0 }
+
+        self.parser_stats[parser]['total'] += 1
+        self.requests += 1
+
+    def add_valid(self, parser):
+        if parser not in self.parser_stats:
+            self.parser_stats[parser] = {'total': 0, 'valid': 0}
+
+        self.parser_stats[parser]['valid'] += 1
+        self.valid_responses += 1
 
 class Mode:
 
@@ -59,14 +78,12 @@ class Mode:
             request_queue.join()
 
         output_queue.put(FinishMessage(self.stats))
+        self.stats.finish = time_ns()
 
-        # Log summary
-        run_time = (time_ns() - self.stats.start) / 1e9
-        run_message = f'Finished enumerating in {Color.BLUE}{run_time:.2f}{Color.RESET} seconds.'
-        requests_message = f'Sent {Color.BLUE}{len(request_queue.tested_urls)}{Color.RESET} requests.'
-        responses_message = f'Identified {Color.GREEN}{self.stats.valid_responses}{Color.RESET} valid responses.'
+        output_queue.put(SummaryMessage(self.stats))
 
-        logger.info(f'{run_message} {requests_message} {responses_message}')
+        for parser, stats in self.stats.parser_stats.items():
+            output_queue.put(ParserStatMessage(parser, stats))
 
     def enumerate_wordlist(self, request_queue, response_queue, output_queue):
         while self.is_wordlist_not_exhausted() or not request_queue.empty() or not response_queue.empty():
@@ -91,7 +108,10 @@ class Mode:
         logger.debug(f'Reset wordlist with new directory: {self.current_directory}')
 
     def add_request(self, request_queue, url, tag, priority=Priority.NORMAL):
-        self.stats.requests += 1
+        if url in request_queue.tested_urls:
+            return
+
+        self.stats.add_request(tag)
         request_queue.add_request(url, tag, priority)
 
     def update_request_queue(self, request_queue):
@@ -130,4 +150,4 @@ class Mode:
         logger.debug(f'Processing valid response: [{response.status_code}] {response.url}')
         output_queue.put(ResponseMessage(response, tag))
 
-        self.stats.valid_responses += 1
+        self.stats.add_valid(tag)
