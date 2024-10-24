@@ -1,5 +1,6 @@
 from dirb.modes.dictionary import ParsedDictionary
 from dirb.modes.parser.href import HrefParser
+from dirb.modes.parser.index import IndexParser
 from dirb.modes.parser.link import LinkParser
 from dirb.modes.parser.script import ScriptParser
 from dirb.modes.parser.service import ServiceParser
@@ -12,4 +13,4 @@ class Combined(ParsedDictionary):
     def __init__(self, wordlist, target: Target, extensions):
         super().__init__(wordlist, target, extensions)
 
-        self.parsers = [ HrefParser(), SrcParser(), LinkParser(self.target), ScriptParser(), ServiceParser() ]
+        self.parsers = [ IndexParser(), HrefParser(), SrcParser(), LinkParser(self.target), ScriptParser(), ServiceParser() ]
