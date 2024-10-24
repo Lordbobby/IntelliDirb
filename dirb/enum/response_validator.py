@@ -13,7 +13,9 @@ class ResponseValidator:
         if response.status_code in self.invalid_response_codes:
             return False
 
-
+        # Prevent valid . files from hitting
+        if response.status_code == 403 and response.url.split('/')[-1].startswith('.'):
+            return False
 
         if response.status_code in self.valid_response_codes:
             return True
