@@ -13,18 +13,7 @@ class ResponseValidator:
         if response.status_code in self.invalid_response_codes:
             return False
 
-        resp_size = len(response.content)
 
-        if resp_size not in self.size_counter:
-            self.size_counter[resp_size] = 1
-
-            return True
-
-        self.size_counter[resp_size] = self.size_counter[resp_size] + 1
-
-        # Check if this is a constant response size, may indicate a not found page returning a valid response code
-        if self.size_counter[resp_size] > 5:
-            return False
 
         if response.status_code in self.valid_response_codes:
             return True
