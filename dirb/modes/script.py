@@ -4,7 +4,7 @@ from dirb.target import Target
 
 class Script(ParsedDictionary):
 
-    def __init__(self, wordlist, target: Target, extensions):
-        super().__init__(wordlist, target, extensions)
+    def __init__(self, wordlist, target: Target, extensions, excluded_dirs):
+        super().__init__(wordlist, target, extensions, excluded_dirs)
 
         self.parsers = [ ScriptParser() ]

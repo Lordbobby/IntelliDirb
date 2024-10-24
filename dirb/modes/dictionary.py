@@ -15,6 +15,13 @@ def can_recurse(response):
         return True
     return False
 
+def is_excluded(directory, excluded_dirs):
+    for dir in excluded_dirs:
+        if dir in directory:
+            return True
+
+    return False
+
 class Dictionary(Mode):
     def process_valid_response(self, response, tag, request_queue: RequestQueue, output_queue):
         super().process_valid_response(response, tag, request_queue, output_queue)
@@ -23,13 +30,18 @@ class Dictionary(Mode):
             directory = response.headers['Location']
             directory = re.findall('(?<=(?<!/)/)(?!/)[^?&#]+', directory)[0]
 
+            if is_excluded(directory, self.excluded_dirs):
+                output_queue.put(RecurseMessage(directory, True))
+                logger.debug(f'Not recursing {directory} due to exclusion')
+                return
+
             self.recurse_directory(directory)
             output_queue.put(RecurseMessage(directory))
             logger.debug(f'Recursing {directory} from response url {response.url} and request url {response.request.url}')
 
 class ParsedDictionary(Dictionary):
-    def __init__(self, wordlist, target: Target, extensions):
-        super().__init__(wordlist, target, extensions)
+    def __init__(self, wordlist, target: Target, extensions, excluded_dirs):
+        super().__init__(wordlist, target, extensions, excluded_dirs)
 
         self.parsers = []
 

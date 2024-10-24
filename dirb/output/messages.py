@@ -75,16 +75,21 @@ class LogMessage(Message):
         return self.message
 
 class RecurseMessage(Message):
-    def __init__(self, directory):
+    def __init__(self, directory, excluded=False):
         super().__init__('Recurse')
 
         self.directory = directory
+        self.excluded = excluded
 
     def to_csv_string(self):
-        return super().to_csv_string(self.directory)
+        return super().to_csv_string(self.directory, self.excluded)
 
     def to_console_string(self):
-        return f'{Color.YELLOW} ->{Color.RESET} Identified likely directory: {Color.GREEN}{self.directory}{Color.RESET}'
+        exclusion_msg = ''
+        if self.excluded:
+            exclusion_msg = f'{Color.RED}[NOT RECURSING]'
+
+        return f'{Color.YELLOW} ->{Color.RESET} Identified likely directory: {Color.GREEN}{self.directory} {exclusion_msg}{Color.RESET}'
 
 class SummaryMessage(Message):
     def __init__(self, stats):

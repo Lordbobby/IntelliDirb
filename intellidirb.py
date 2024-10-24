@@ -42,6 +42,8 @@ def setup_argument_parser():
                             help='Don\'t print colors to the console.')
     arg_parser.add_argument('--no_recurse', dest='recurse', default=True, action='store_false',
                             help='Don\'t attempt to recurse into directories.')
+    arg_parser.add_argument('--exclude', dest='excluded_dirs', default='', help='Directories to exclude during recursion.')
+
 
     return arg_parser
 
@@ -71,15 +73,15 @@ if __name__ == '__main__':
     mode = None
 
     if args.mode == 'content':
-        mode = Content(wordlist, target, args.extensions)
+        mode = Content(wordlist, target, args.extensions, args.excluded_dirs)
     elif args.mode == 'service':
-        mode = Service(wordlist, target, args.extensions)
+        mode = Service(wordlist, target, args.extensions, args.excluded_dirs)
     elif args.mode == 'script':
-        mode = Script(wordlist, target, args.extensions)
+        mode = Script(wordlist, target, args.extensions, args.excluded_dirs)
     elif args.mode == 'all':
-        mode = Combined(wordlist, target, args.extensions)
+        mode = Combined(wordlist, target, args.extensions, args.excluded_dirs)
     else:
-        mode = Dictionary(wordlist, target, args.extensions)
+        mode = Dictionary(wordlist, target, args.extensions, args.excluded_dirs)
 
     # Settings
     Settings.can_recurse = args.recurse

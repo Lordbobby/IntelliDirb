@@ -48,10 +48,11 @@ class ModeStats:
 
 class Mode:
 
-    def __init__(self, wordlist: str, target: Target, extensions):
+    def __init__(self, wordlist: str, target: Target, extensions, excluded_dirs):
         self.wordlist = self.get_wordlist_file(wordlist)
         self.target = target.get_base_url()
         self.extensions = create_extension_list(extensions)
+        self.excluded_dirs = excluded_dirs.split(',')
         
         self.validator = ResponseValidator()
         self.stats = ModeStats()

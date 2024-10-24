@@ -10,7 +10,7 @@ from dirb.target import Target
 
 class Combined(ParsedDictionary):
 
-    def __init__(self, wordlist, target: Target, extensions):
-        super().__init__(wordlist, target, extensions)
+    def __init__(self, wordlist, target: Target, extensions, excluded_dirs):
+        super().__init__(wordlist, target, extensions, excluded_dirs)
 
         self.parsers = [ IndexParser(), HrefParser(), SrcParser(), LinkParser(self.target), ScriptParser(), ServiceParser() ]
