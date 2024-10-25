@@ -3,6 +3,7 @@ from time import time_ns
 
 from dirb.enum.request_queue import RequestQueue, Priority
 from dirb.modes.mode import Mode
+from dirb.modes.parser.index import is_index
 from dirb.output import logger
 from dirb.output.messages import RecurseMessage
 from dirb.target import Target
@@ -38,6 +39,13 @@ class Dictionary(Mode):
             self.recurse_directory(directory)
             output_queue.put(RecurseMessage(directory))
             logger.debug(f'Recursing {directory} from response url {response.url} and request url {response.request.url}')
+
+        if is_index(response.text):
+            directory = re.findall('(?<=(?<!/)/)(?!/)[^?&#]+', response.url)[0]
+
+            self.remove_recurse(directory)
+            logger.debug(f'Index page, removing {directory} from recursion.')
+
 
 class ParsedDictionary(Dictionary):
     def __init__(self, wordlist, target: Target, extensions, excluded_dirs):

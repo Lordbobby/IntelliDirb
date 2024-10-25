@@ -87,7 +87,7 @@ class RecurseMessage(Message):
     def to_console_string(self):
         exclusion_msg = ''
         if self.excluded:
-            exclusion_msg = f'{Color.RED}[NOT RECURSING]'
+            exclusion_msg = f'{Color.RED}[EXCLUDED]'
 
         return f'{Color.YELLOW} ->{Color.RESET} Identified likely directory: {Color.GREEN}{self.directory} {exclusion_msg}{Color.RESET}'
 

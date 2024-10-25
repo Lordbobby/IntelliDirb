@@ -60,6 +60,7 @@ class Mode:
         # tracking for wordlist
         self.current_directory = '/'
         self.directory_queue = Queue(maxsize=0)
+        self.removed_directories = []
 
     def get_wordlist_file(self, wordlist_path):
         return WordlistFile(wordlist_path)
@@ -100,13 +101,30 @@ class Mode:
 
         self.directory_queue.put(path)
 
+    def remove_recurse(self, path):
+        if not path.startswith('/'):
+            path = f'/{path}'
+
+        if not path.endswith('/'):
+            path = f'{path}/'
+
+        self.removed_directories.append(path)
+
     def reset_wordlist(self):
         if self.directory_queue.empty():
             return
 
+        next_dir = self.directory_queue.get()
+
+        while next_dir in self.removed_directories:
+            if self.directory_queue.empty():
+                return
+
+            next_dir = self.directory_queue.get()
+
+        self.current_directory = next_dir
         self.wordlist.reset_index()
-        self.current_directory = self.directory_queue.get()
-        logger.debug(f'Reset wordlist with new directory: {self.current_directory}')
+        logger.info(f'Recursing into new directory: {self.current_directory} ({self.directory_queue.qsize()} left)')
 
     def add_request(self, request_queue, url, tag, priority=Priority.NORMAL):
         if url in request_queue.tested_urls:
