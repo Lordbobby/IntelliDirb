@@ -1,4 +1,5 @@
 import re
+from urllib.parse import unquote
 
 from dirb.modes.parser.parser import Parser
 
@@ -45,6 +46,7 @@ class RegexBasedParser(Parser):
         base_url = calculate_base_url(response)
 
         for path in found_paths:
+            path = unquote(path)
             path = path.replace('\/', '/')
 
             url = f'{target}{path}'
