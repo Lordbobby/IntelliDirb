@@ -79,9 +79,8 @@ class Mode:
             # Ensure requests have finished
             request_queue.join()
 
-        output_queue.put(FinishMessage(self.stats))
         self.stats.finish = time_ns()
-
+        output_queue.put(FinishMessage(self.stats))
         output_queue.put(SummaryMessage(self.stats))
 
         for parser, stats in self.stats.parser_stats.items():

@@ -32,7 +32,7 @@ class FinishMessage(Message):
         self.stats = stats
 
     def to_csv_string(self):
-        return super().to_csv_string(self.stats.requests, self.stats.valid_responses)
+        return super().to_csv_string(self.stats.requests, self.stats.valid_responses, self.stats.get_total_time())
 
 class ResponseMessage(Message):
     def __init__(self, response: Response, tag):
