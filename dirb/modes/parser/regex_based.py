@@ -58,6 +58,10 @@ class RegexBasedParser(Parser):
             url = url.replace('/./', '/')
             url = collapse_url(url)
 
+            # big bandage, not good coding
+            if 'tagged-items/3/4/5/3' in url:
+                continue
+
             request_urls.append(url)
 
         return self._build_results(urls=request_urls)
