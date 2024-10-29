@@ -4,7 +4,6 @@ from time import time_ns
 from dirb.enum.request_queue import Priority
 from dirb.enum.response_validator import ResponseValidator
 from dirb.output import logger
-from dirb.output.color import Color
 from dirb.output.messages import ResponseMessage, StartMessage, FinishMessage, SummaryMessage, ParserStatMessage
 from dirb.target import Target
 from dirb.wordlist.wordlist_file import WordlistFile
@@ -156,7 +155,7 @@ class Mode:
         # counter so it doesn't run forever
         processed = 0
         
-        while not response_queue.empty() and processed < WORDS_TO_PULL:
+        while not response_queue.empty() and processed < WORDS_TO_PULL * 5:
             processed += 1
             response, tag = response_queue.get()
 
