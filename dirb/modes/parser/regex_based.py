@@ -47,6 +47,7 @@ class RegexBasedParser(Parser):
 
         for path in found_paths:
             path = unquote(path)
+            path = path.replace('\\', '')
             path = path.replace('\/', '/')
 
             url = f'{target}{path}'

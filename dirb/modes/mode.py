@@ -137,7 +137,6 @@ class Mode:
             return
 
         if request_queue.qsize() > WORDS_TO_PULL * 10:
-            logger.debug('Queue sufficiently full, skipping adding requests for now.')
             return
 
         words = self.wordlist.get_words(WORDS_TO_PULL)
