@@ -17,6 +17,10 @@ class ResponseValidator:
         if response.status_code == 403 and response.url.split('/')[-1].startswith('.'):
             return False
 
+        # Prevent valid wordpress enumeration from hitting multiple times
+        if response.status_code == 301 and 'Location' in response.headers and len(response.text) == 0:
+            return False
+
         if response.status_code in self.valid_response_codes:
             return True
 

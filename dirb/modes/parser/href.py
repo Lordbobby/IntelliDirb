@@ -7,6 +7,6 @@ class HrefParser(RegexBasedParser):
     def find_paths_in_response(self, content, regex):
         matches = super().find_paths_in_response(content, regex)
 
-        matches = [match for match in matches if not match.startswith('http')]
+        matches = [match for match in matches if not match.startswith('http') and not match.startswith('//')]
 
         return matches
